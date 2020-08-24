@@ -85,7 +85,7 @@
 					.stringify(indexedReqObj), false);
 			if (resp.statusCode == "OK") {
 				sessionStorage.setItem("Authorization", "Bearer " + resp.data);
-				document.location.href = "/authenticate/product";
+				document.location.href = "/razorpay/product";
 			} else {
 				alert(resp.message);
 			}
