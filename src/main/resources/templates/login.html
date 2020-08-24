@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- added for razorpay -->
+	<meta name="viewport" content="width=device-width">
+	<link rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+		integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+		crossorigin="anonymous">
+
+</head>
+<body class="nav-md">
+	<div class="container body">
+		<div class="main_container">
+
+			<form id="loginform">
+
+				<div class="form-group">
+					<label for="username">User Name</label> <input type="text"
+						class="form-control" id="username" name="username"
+						placeholder="Enter user Name" required>
+				</div>
+
+				<div class="form-group">
+					<label for="email">Password</label> <input type="password"
+						class="form-control" id="password" name="password"
+						placeholder="Enter password" required>
+				</div>
+				
+
+				<input type="submit" class="btn btn-primary" id="submit-button1"
+					style="margin-top: -2px">
+			</form>
+
+
+		</div>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" ></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
+	
+
+	<script type="text/javascript">
+		function doPost(path, requestObject, isAsync) {
+			var resp;
+			$.ajax({
+				url : path,
+				type : 'POST',
+				data : requestObject,
+				contentType : "application/json; charset=UTF-8",
+				async : isAsync,
+				success : function(data) {
+					resp = JSON.parse(JSON.stringify(data))
+				},
+				error: function (errorResponse, status, exception) {
+					resp = JSON.parse(errorResponse.responseText); 
+				}
+			})
+			return resp;
+		}
+	</script>
+
+	<script>
+		document.getElementById('submit-button1').onclick = function(e) {
+		    e.preventDefault();
+			if(document.forms["loginform"]["username"].value == '') {
+				alert("Username cannot be empty");
+				return false;
+			}
+			
+			if(document.forms["loginform"]["password"].value == '') {
+				alert("Password cannot be empty");
+				return false;
+			}
+			
+			var reqObject = $('#loginform').serializeArray();
+			var indexedReqObj = {};
+			$.map(reqObject, function(n, i) {
+				indexedReqObj[n['name']] = n['value'];
+			});
+
+			resp = doPost("/authenticate/login", JSON
+					.stringify(indexedReqObj), false);
+			if (resp.statusCode == "OK") {
+				sessionStorage.setItem("Authorization", "Bearer " + resp.data);
+				document.location.href = "/authenticate/product";
+			} else {
+				alert(resp.message);
+			}
+		}
+	</script>
+
+</body>
+</html>
